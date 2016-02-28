@@ -3,6 +3,7 @@
 * Added support for `EncodeJson`/`DecodeJson`. This provides `ToInput` and `FromInput` instances for arbitrary tuples, case classes, etc. as long
   as you have appropriate codec in scope
 * Added support for input parsing by providing an instance of `InputParser` type class 
+* Updated to latest version of marshalling API
 
 ## v0.1.0 (2016-01-23)
 
