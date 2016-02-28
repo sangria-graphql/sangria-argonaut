@@ -1,17 +1,36 @@
 package sangria.marshalling
 
-import _root_.argonaut.Json
+import _root_.argonaut._
+import _root_.argonaut.Argonaut._
 import org.scalatest.{Matchers, WordSpec}
 
 import sangria.marshalling.argonaut._
 import sangria.marshalling.testkit._
 
-class ArgonautSupportSpec extends WordSpec with Matchers with MarshallingBehaviour with InputHandlingBehaviour {
+class ArgonautSupportSpec extends WordSpec with Matchers with MarshallingBehaviour with InputHandlingBehaviour with ParsingBehaviour {
   "ArgonautJson integration" should {
+    implicit def CommentCodecJson: CodecJson[Comment] =
+      casecodec2(Comment.apply, Comment.unapply)("author", "text")
+
+    implicit def ArticleCodecJson: CodecJson[Article] =
+      casecodec4(Article.apply, Article.unapply)("title", "text", "tags", "comments")
+
     behave like `value (un)marshaller` (ArgonautResultMarshaller)
 
     behave like `AST-based input unmarshaller` (argonautFromInput)
     behave like `AST-based input marshaller` (ArgonautResultMarshaller)
+
+    behave like `case class input unmarshaller`
+    behave like `case class input marshaller` (ArgonautResultMarshaller)
+
+    behave like `input parser` (ParseTestSubjects(
+      complex = """{"a": [null, 123, [{"foo": "bar"}]], "b": {"c": true, "d": null}}""",
+      simpleString = "\"bar\"",
+      simpleInt = "12345",
+      simpleNull = "null",
+      list = "[\"bar\", 1, null, true, [1, 2, 3]]",
+      syntaxError = List("[123, \"FOO\" \"BAR\"")
+    ))
   }
 
   val toRender = Json.obj(

@@ -1,6 +1,9 @@
 package sangria.marshalling
 
 import _root_.argonaut._
+import _root_.argonaut.Argonaut._
+
+import scala.util.{Success, Failure}
 
 object argonaut {
   implicit object ArgonautResultMarshaller extends ResultMarshaller {
@@ -77,4 +80,22 @@ object argonaut {
     val marshaller = ArgonautResultMarshaller
     def fromResult(node: marshaller.Node) = node
   }
+
+  implicit def argonautEncodeJsonToInput[T : EncodeJson]: ToInput[T, Json] =
+    new ToInput[T, Json] {
+      def toInput(value: T) = implicitly[EncodeJson[T]].apply(value) → ArgonautInputUnmarshaller
+    }
+
+  implicit def argonautDecoderFromInput[T : DecodeJson]: FromInput[T] =
+    new FromInput[T] {
+      val marshaller = ArgonautResultMarshaller
+      def fromResult(node: marshaller.Node) =
+        implicitly[DecodeJson[T]].decodeJson(node).fold((error, _) ⇒ throw InputParsingError(Vector(error)), identity)
+    }
+
+  implicit object ArgonautInputParser extends InputParser[Json] {
+    def parse(str: String) = str.decodeEither[Json].fold(error ⇒ Failure(ArgonautParsingException(error)), Success(_))
+  }
+
+  case class ArgonautParsingException(message: String) extends Exception(message)
 }

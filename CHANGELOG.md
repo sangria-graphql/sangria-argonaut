@@ -1,3 +1,9 @@
+## v0.2.0 (2016-02-28)
+
+* Added support for `EncodeJson`/`DecodeJson`. This provides `ToInput` and `FromInput` instances for arbitrary tuples, case classes, etc. as long
+  as you have appropriate codec in scope
+* Added support for input parsing by providing an instance of `InputParser` type class 
+
 ## v0.1.0 (2016-01-23)
 
 * Initial release
