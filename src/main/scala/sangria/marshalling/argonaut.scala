@@ -22,12 +22,19 @@ object argonaut {
       case None ⇒ nullNode
     }
 
-    def booleanNode(value: Boolean) = Json.jBool(value)
-    def floatNode(value: Double) = Json.jNumber(value).get
-    def stringNode(value: String) = Json.jString(value)
-    def intNode(value: Int) = Json.jNumber(value)
-    def bigIntNode(value: BigInt) = Json.jNumber(BigDecimal(value))
-    def bigDecimalNode(value: BigDecimal) = Json.jNumber(value)
+    def scalarNode(value: Any, typeName: String, info: Set[ScalarValueInfo]) = value match {
+      case v: String ⇒ Json.jString(v)
+      case v: Boolean ⇒ Json.jBool(v)
+      case v: Int ⇒ Json.jNumber(v)
+      case v: Long ⇒ Json.jNumber(v)
+      case v: Float ⇒ Json.jNumber(v).get
+      case v: Double ⇒ Json.jNumber(v).get
+      case v: BigInt ⇒ Json.jNumber(BigDecimal(v))
+      case v: BigDecimal ⇒ Json.jNumber(v)
+      case v ⇒ throw new IllegalArgumentException("Unsupported scalar value: " + v)
+    }
+
+    def enumNode(value: String, typeName: String) = Json.jString(value)
 
     def nullNode = Json.jNull
 
