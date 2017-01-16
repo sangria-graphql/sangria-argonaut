@@ -1,3 +1,8 @@
+## v1.0.0 (2017-01-16)
+
+* 1.0 Release
+* Updated argonaut to v6.2-RC2 
+
 ## v0.3.2 (2016-11-19)
 
 * Cross-compile for scala 2.11 and 2.12

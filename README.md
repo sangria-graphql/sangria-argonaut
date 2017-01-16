@@ -5,7 +5,7 @@
 SBT Configuration:
 
 ```scala
-libraryDependencies += "org.sangria-graphql" %% "sangria-argonaut" % "0.3.2"
+libraryDependencies += "org.sangria-graphql" %% "sangria-argonaut" % "1.0.0"
 ```
 
 ## License
