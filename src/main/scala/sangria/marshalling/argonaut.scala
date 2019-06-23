@@ -18,20 +18,20 @@ object argonaut {
 
     def arrayNode(values: Vector[Json]) = Json.array(values: _*)
     def optionalArrayNodeValue(value: Option[Json]) = value match {
-      case Some(v) ⇒ v
-      case None ⇒ nullNode
+      case Some(v) => v
+      case None => nullNode
     }
 
     def scalarNode(value: Any, typeName: String, info: Set[ScalarValueInfo]) = value match {
-      case v: String ⇒ Json.jString(v)
-      case v: Boolean ⇒ Json.jBool(v)
-      case v: Int ⇒ Json.jNumber(v)
-      case v: Long ⇒ Json.jNumber(v)
-      case v: Float ⇒ Json.jNumber(v).get
-      case v: Double ⇒ Json.jNumber(v).get
-      case v: BigInt ⇒ Json.jNumber(BigDecimal(v))
-      case v: BigDecimal ⇒ Json.jNumber(v)
-      case v ⇒ throw new IllegalArgumentException("Unsupported scalar value: " + v)
+      case v: String => Json.jString(v)
+      case v: Boolean => Json.jBool(v)
+      case v: Int => Json.jNumber(v)
+      case v: Long => Json.jNumber(v)
+      case v: Float => Json.jNumber(v).get
+      case v: Double => Json.jNumber(v).get
+      case v: BigInt => Json.jNumber(BigDecimal(v))
+      case v: BigDecimal => Json.jNumber(v)
+      case v => throw new IllegalArgumentException("Unsupported scalar value: " + v)
     }
 
     def enumNode(value: String, typeName: String) = Json.jString(value)
@@ -93,18 +93,18 @@ object argonaut {
 
   implicit def argonautEncodeJsonToInput[T : EncodeJson]: ToInput[T, Json] =
     new ToInput[T, Json] {
-      def toInput(value: T) = implicitly[EncodeJson[T]].apply(value) → ArgonautInputUnmarshaller
+      def toInput(value: T) = implicitly[EncodeJson[T]].apply(value) -> ArgonautInputUnmarshaller
     }
 
   implicit def argonautDecoderFromInput[T : DecodeJson]: FromInput[T] =
     new FromInput[T] {
       val marshaller = ArgonautResultMarshaller
       def fromResult(node: marshaller.Node) =
-        implicitly[DecodeJson[T]].decodeJson(node).fold((error, _) ⇒ throw InputParsingError(Vector(error)), identity)
+        implicitly[DecodeJson[T]].decodeJson(node).fold((error, _) => throw InputParsingError(Vector(error)), identity)
     }
 
   implicit object ArgonautInputParser extends InputParser[Json] {
-    def parse(str: String) = str.decodeEither[Json].fold(error ⇒ Failure(ArgonautParsingException(error)), Success(_))
+    def parse(str: String) = str.decodeEither[Json].fold(error => Failure(ArgonautParsingException(error)), Success(_))
   }
 
   case class ArgonautParsingException(message: String) extends Exception(message)
