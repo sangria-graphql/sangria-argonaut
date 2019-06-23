@@ -34,10 +34,10 @@ class ArgonautSupportSpec extends WordSpec with Matchers with MarshallingBehavio
   }
 
   val toRender = Json.obj(
-    "a" → Json.array(Json.jNull, Json.jNumber(123), Json.array(Json.obj("foo" → Json.jString("bar")))),
-    "b" → Json.obj(
-      "c" → Json.jBool(true),
-      "d" → Json.jNull))
+    "a" -> Json.array(Json.jNull, Json.jNumber(123), Json.array(Json.obj("foo" -> Json.jString("bar")))),
+    "b" -> Json.obj(
+      "c" -> Json.jBool(true),
+      "d" -> Json.jNull))
 
   "InputUnmarshaller" should {
     "throw an exception on invalid scalar values" in {
