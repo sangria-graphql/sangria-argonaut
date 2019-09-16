@@ -19,11 +19,11 @@ scalacOptions ++= {
 }
 
 libraryDependencies ++= Seq(
-  "org.sangria-graphql" %% "sangria-marshalling-api" % "2.0.0-SNAPSHOT",
+  "org.sangria-graphql" %% "sangria-marshalling-api" % "1.0.4-SNAPSHOT",
   "io.argonaut" %% "argonaut" % "6.2.3",
 
-  "org.sangria-graphql" %% "sangria-marshalling-testkit" % "1.1.0-SNAPSHOT" % Test,
-  "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+  "org.sangria-graphql" %% "sangria-marshalling-testkit" % "1.0.2-SNAPSHOT" % Test,
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test
 )
 
 git.remoteRepo := "git@github.com:sangria-graphql/sangria-argonaut.git"
