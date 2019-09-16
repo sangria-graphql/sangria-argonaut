@@ -1,6 +1,7 @@
 name := "sangria-argonaut"
 organization := "org.sangria-graphql"
 version := "1.0.1-SNAPSHOT"
+mimaPreviousArtifacts := Set("org.sangria-graphql" %% "sangria-argonaut" % "1.0.0")
 
 description := "Sangria argonaut marshalling"
 homepage := Some(url("http://sangria-graphql.org"))
