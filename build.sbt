@@ -1,6 +1,5 @@
 name := "sangria-argonaut"
 organization := "org.sangria-graphql"
-version := "1.0.1-SNAPSHOT"
 mimaPreviousArtifacts := Set("org.sangria-graphql" %% "sangria-argonaut" % "1.0.0")
 
 description := "Sangria argonaut marshalling"
@@ -30,7 +29,8 @@ libraryDependencies ++= Seq(
 git.remoteRepo := "git@github.com:sangria-graphql/sangria-argonaut.git"
 
 // Publishing
-
+releaseCrossBuild := true
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
 publishMavenStyle := true
 publishArtifact in Test := false
 pomIncludeRepository := (_ => false)
