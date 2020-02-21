@@ -2,12 +2,13 @@ package sangria.marshalling
 
 import _root_.argonaut._
 import _root_.argonaut.Argonaut._
-import org.scalatest.{Matchers, WordSpec}
 
 import sangria.marshalling.argonaut._
 import sangria.marshalling.testkit._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class ArgonautSupportSpec extends WordSpec with Matchers with MarshallingBehaviour with InputHandlingBehaviour with ParsingBehaviour {
+class ArgonautSupportSpec extends AnyWordSpec with Matchers with MarshallingBehaviour with InputHandlingBehaviour with ParsingBehaviour {
   "ArgonautJson integration" should {
     implicit def CommentCodecJson: CodecJson[Comment] =
       casecodec2(Comment.apply, Comment.unapply)("author", "text")
