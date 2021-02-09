@@ -1,6 +1,6 @@
 [Sangria](http://sangria-graphql.org/) [argonaut](http://argonaut.io) marshalling.
 
-[![Build Status](https://travis-ci.org/sangria-graphql/sangria-argonaut.svg?branch=master)](https://travis-ci.org/sangria-graphql/sangria-argonaut)
+![Continuous Integration](https://github.com/sangria-graphql/sangria-argonaut/workflows/Continuous%20Integration/badge.svg)
 [![Coverage Status](http://coveralls.io/repos/sangria-graphql/sangria-argonaut/badge.svg?branch=master&service=github)](http://coveralls.io/github/sangria-graphql/sangria-argonaut?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.sangria-graphql/sangria-argonaut_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.sangria-graphql/sangria-argonaut_2.12)
 [![License](http://img.shields.io/:license-Apache%202-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
