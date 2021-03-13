@@ -3,7 +3,7 @@ package sangria.marshalling
 import _root_.argonaut._
 import _root_.argonaut.Argonaut._
 
-import scala.util.{Success, Failure}
+import scala.util.{Failure, Success}
 
 object argonaut {
   implicit object ArgonautResultMarshaller extends ResultMarshaller {
@@ -11,7 +11,8 @@ object argonaut {
     type MapBuilder = ArrayMapBuilder[Node]
 
     def emptyMapNode(keys: Seq[String]) = new ArrayMapBuilder[Node](keys)
-    def addMapNodeElem(builder: MapBuilder, key: String, value: Node, optional: Boolean) = builder.add(key, value)
+    def addMapNodeElem(builder: MapBuilder, key: String, value: Node, optional: Boolean) =
+      builder.add(key, value)
 
     def mapNode(builder: MapBuilder) = Json.obj(builder.toSeq: _*)
     def mapNode(keyValues: Seq[(String, Json)]) = Json.obj(keyValues: _*)
@@ -63,7 +64,7 @@ object argonaut {
       else if (node.isNumber) {
         val num = node.number.get.toBigDecimal
 
-        num.toBigIntExact getOrElse num
+        num.toBigIntExact.getOrElse(num)
       } else if (node.isString)
         node.string.get
       else
@@ -77,7 +78,8 @@ object argonaut {
       node.isBool || node.isNumber || node.isString
 
     def isVariableNode(node: Json) = false
-    def getVariableName(node: Json) = throw new IllegalArgumentException("variables are not supported")
+    def getVariableName(node: Json) = throw new IllegalArgumentException(
+      "variables are not supported")
 
     def render(node: Json) = node.nospaces
   }
@@ -91,20 +93,23 @@ object argonaut {
     def fromResult(node: marshaller.Node) = node
   }
 
-  implicit def argonautEncodeJsonToInput[T : EncodeJson]: ToInput[T, Json] =
+  implicit def argonautEncodeJsonToInput[T: EncodeJson]: ToInput[T, Json] =
     new ToInput[T, Json] {
       def toInput(value: T) = implicitly[EncodeJson[T]].apply(value) -> ArgonautInputUnmarshaller
     }
 
-  implicit def argonautDecoderFromInput[T : DecodeJson]: FromInput[T] =
+  implicit def argonautDecoderFromInput[T: DecodeJson]: FromInput[T] =
     new FromInput[T] {
       val marshaller = ArgonautResultMarshaller
       def fromResult(node: marshaller.Node) =
-        implicitly[DecodeJson[T]].decodeJson(node).fold((error, _) => throw InputParsingError(Vector(error)), identity)
+        implicitly[DecodeJson[T]]
+          .decodeJson(node)
+          .fold((error, _) => throw InputParsingError(Vector(error)), identity)
     }
 
   implicit object ArgonautInputParser extends InputParser[Json] {
-    def parse(str: String) = str.decodeEither[Json].fold(error => Failure(ArgonautParsingException(error)), Success(_))
+    def parse(str: String) =
+      str.decodeEither[Json].fold(error => Failure(ArgonautParsingException(error)), Success(_))
   }
 
   case class ArgonautParsingException(message: String) extends Exception(message)
