@@ -1,4 +1,4 @@
-[Sangria](http://sangria-graphql.org/) [argonaut](http://argonaut.io) marshalling.
+[Sangria](https://sangria-graphql.github.io/) [argonaut](http://argonaut.io) marshalling.
 
 ![Continuous Integration](https://github.com/sangria-graphql/sangria-argonaut/workflows/Continuous%20Integration/badge.svg)
 [![Coverage Status](http://coveralls.io/repos/sangria-graphql/sangria-argonaut/badge.svg?branch=master&service=github)](http://coveralls.io/github/sangria-graphql/sangria-argonaut?branch=master)
@@ -14,4 +14,4 @@ libraryDependencies += "org.sangria-graphql" %% "sangria-argonaut" % "<latest ve
 
 ## License
 
-**sangria-argonaut** is licensed under [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+**sangria-argonaut** is licensed under [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
