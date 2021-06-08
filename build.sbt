@@ -3,9 +3,9 @@ organization := "org.sangria-graphql"
 mimaPreviousArtifacts := Set("org.sangria-graphql" %% "sangria-argonaut" % "1.0.1")
 
 description := "Sangria argonaut marshalling"
-homepage := Some(url("http://sangria-graphql.org"))
+homepage := Some(url("https://sangria-graphql.github.io/"))
 licenses := Seq(
-  "Apache License, ASL Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+  "Apache License, ASL Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0"))
 
 ThisBuild / crossScalaVersions := Seq("2.12.14", "2.13.6")
 ThisBuild / scalaVersion := crossScalaVersions.value.last
