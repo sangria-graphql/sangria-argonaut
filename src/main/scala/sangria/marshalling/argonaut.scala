@@ -3,7 +3,7 @@ package sangria.marshalling
 import _root_.argonaut._
 import _root_.argonaut.Argonaut._
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 object argonaut {
   implicit object ArgonautResultMarshaller extends ResultMarshaller {
@@ -11,19 +11,23 @@ object argonaut {
     type MapBuilder = ArrayMapBuilder[Node]
 
     def emptyMapNode(keys: Seq[String]) = new ArrayMapBuilder[Node](keys)
-    def addMapNodeElem(builder: MapBuilder, key: String, value: Node, optional: Boolean) =
+    def addMapNodeElem(
+        builder: MapBuilder,
+        key: String,
+        value: Node,
+        optional: Boolean): ArrayMapBuilder[Node] =
       builder.add(key, value)
 
-    def mapNode(builder: MapBuilder) = Json.obj(builder.toSeq: _*)
-    def mapNode(keyValues: Seq[(String, Json)]) = Json.obj(keyValues: _*)
+    def mapNode(builder: MapBuilder): Node = Json.obj(builder.toSeq: _*)
+    def mapNode(keyValues: Seq[(String, Json)]): Node = Json.obj(keyValues: _*)
 
-    def arrayNode(values: Vector[Json]) = Json.array(values: _*)
-    def optionalArrayNodeValue(value: Option[Json]) = value match {
+    def arrayNode(values: Vector[Json]): Node = Json.array(values: _*)
+    def optionalArrayNodeValue(value: Option[Json]): Node = value match {
       case Some(v) => v
       case None => nullNode
     }
 
-    def scalarNode(value: Any, typeName: String, info: Set[ScalarValueInfo]) = value match {
+    def scalarNode(value: Any, typeName: String, info: Set[ScalarValueInfo]): Node = value match {
       case v: String => Json.jString(v)
       case v: Boolean => Json.jBool(v)
       case v: Int => Json.jNumber(v)
@@ -35,30 +39,30 @@ object argonaut {
       case v => throw new IllegalArgumentException("Unsupported scalar value: " + v)
     }
 
-    def enumNode(value: String, typeName: String) = Json.jString(value)
+    def enumNode(value: String, typeName: String): Node = Json.jString(value)
 
-    def nullNode = Json.jNull
+    def nullNode: Node = Json.jNull
 
-    def renderCompact(node: Json) = node.nospaces
-    def renderPretty(node: Json) = node.spaces2
+    def renderCompact(node: Json): String = node.nospaces
+    def renderPretty(node: Json): String = node.spaces2
   }
 
   implicit object ArgonautMarshallerForType extends ResultMarshallerForType[Json] {
-    val marshaller = ArgonautResultMarshaller
+    val marshaller: ArgonautResultMarshaller.type = ArgonautResultMarshaller
   }
 
   implicit object ArgonautInputUnmarshaller extends InputUnmarshaller[Json] {
-    def getRootMapValue(node: Json, key: String) = node.obj.get(key)
+    def getRootMapValue(node: Json, key: String): Option[Json] = node.obj.get(key)
 
-    def isMapNode(node: Json) = node.isObject
-    def getMapValue(node: Json, key: String) = node.obj.get(key)
-    def getMapKeys(node: Json) = node.obj.get.fields
+    def isMapNode(node: Json): JsonBoolean = node.isObject
+    def getMapValue(node: Json, key: String): Option[Json] = node.obj.get(key)
+    def getMapKeys(node: Json): List[Json.JsonField] = node.obj.get.fields
 
-    def isListNode(node: Json) = node.isArray
-    def getListValue(node: Json) = node.array.get
+    def isListNode(node: Json): JsonBoolean = node.isArray
+    def getListValue(node: Json): Json.JsonArray = node.array.get
 
-    def isDefined(node: Json) = !node.isNull
-    def getScalarValue(node: Json) =
+    def isDefined(node: Json): JsonBoolean = !node.isNull
+    def getScalarValue(node: Json): Any =
       if (node.isBool)
         node.bool.get
       else if (node.isNumber) {
@@ -70,45 +74,46 @@ object argonaut {
       else
         throw new IllegalStateException(s"$node is not a scalar value")
 
-    def getScalaScalarValue(node: Json) = getScalarValue(node)
+    def getScalaScalarValue(node: Json): Any = getScalarValue(node)
 
-    def isEnumNode(node: Json) = node.isString
+    def isEnumNode(node: Json): JsonBoolean = node.isString
 
-    def isScalarNode(node: Json) =
+    def isScalarNode(node: Json): JsonBoolean =
       node.isBool || node.isNumber || node.isString
 
-    def isVariableNode(node: Json) = false
+    def isVariableNode(node: Json): JsonBoolean = false
     def getVariableName(node: Json) = throw new IllegalArgumentException(
       "variables are not supported")
 
-    def render(node: Json) = node.nospaces
+    def render(node: Json): String = node.nospaces
   }
 
   implicit object argonautToInput extends ToInput[Json, Json] {
-    def toInput(value: Json) = (value, ArgonautInputUnmarshaller)
+    def toInput(value: Json): (Json, InputUnmarshaller[Json]) = (value, ArgonautInputUnmarshaller)
   }
 
   implicit object argonautFromInput extends FromInput[Json] {
-    val marshaller = ArgonautResultMarshaller
-    def fromResult(node: marshaller.Node) = node
+    val marshaller: ArgonautResultMarshaller.type = ArgonautResultMarshaller
+    def fromResult(node: marshaller.Node): Json = node
   }
 
   implicit def argonautEncodeJsonToInput[T: EncodeJson]: ToInput[T, Json] =
     new ToInput[T, Json] {
-      def toInput(value: T) = implicitly[EncodeJson[T]].apply(value) -> ArgonautInputUnmarshaller
+      def toInput(value: T): (Json, ArgonautInputUnmarshaller.type) =
+        implicitly[EncodeJson[T]].apply(value) -> ArgonautInputUnmarshaller
     }
 
   implicit def argonautDecoderFromInput[T: DecodeJson]: FromInput[T] =
     new FromInput[T] {
-      val marshaller = ArgonautResultMarshaller
-      def fromResult(node: marshaller.Node) =
+      val marshaller: ArgonautResultMarshaller.type = ArgonautResultMarshaller
+      def fromResult(node: marshaller.Node): T =
         implicitly[DecodeJson[T]]
           .decodeJson(node)
           .fold((error, _) => throw InputParsingError(Vector(error)), identity)
     }
 
   implicit object ArgonautInputParser extends InputParser[Json] {
-    def parse(str: String) =
+    def parse(str: String): Try[Json] =
       str.decodeEither[Json].fold(error => Failure(ArgonautParsingException(error)), Success(_))
   }
 
