@@ -8,6 +8,8 @@ import sangria.marshalling.testkit._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
+import scala.language.postfixOps
+
 class ArgonautSupportSpec
     extends AnyWordSpec
     with Matchers
@@ -15,11 +17,36 @@ class ArgonautSupportSpec
     with InputHandlingBehaviour
     with ParsingBehaviour {
   "ArgonautJson integration" should {
+
     implicit def CommentCodecJson: CodecJson[Comment] =
-      casecodec2(Comment.apply, Comment.unapply)("author", "text")
+      CodecJson(
+        (c: Comment) =>
+          ("author" := c.author) ->:
+            ("text" := c.text) ->:
+            jEmptyObject,
+        v =>
+          for {
+            author <- (v --\ "author").as[String]
+            text <- (v --\ "text").as[Option[String]]
+          } yield Comment(author, text)
+      )
 
     implicit def ArticleCodecJson: CodecJson[Article] =
-      casecodec4(Article.apply, Article.unapply)("title", "text", "tags", "comments")
+      CodecJson(
+        (a: Article) =>
+          ("title" := a.title) ->:
+            ("text" := a.text) ->:
+            ("tags" := a.tags) ->:
+            ("comments" := a.comments) ->:
+            jEmptyObject,
+        v =>
+          for {
+            title <- (v --\ "title").as[String]
+            text <- (v --\ "text").as[Option[String]]
+            tags <- (v --\ "tags").as[Option[List[String]]]
+            comments <- (v --\ "comments").as[List[Comment]]
+          } yield Article(title, text, tags, comments)
+      )
 
     behave.like(`value (un)marshaller`(ArgonautResultMarshaller))
 
@@ -40,7 +67,7 @@ class ArgonautSupportSpec
       )))
   }
 
-  val toRender = Json.obj(
+  val toRender: Json = Json.obj(
     "a" -> Json.array(
       Json.jNull,
       Json.jNumber(123),
