@@ -15,7 +15,7 @@ homepage := Some(url("https://sangria-graphql.github.io/"))
 licenses := Seq(
   "Apache License, ASL Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0"))
 
-ThisBuild / crossScalaVersions := Seq("2.12.19", "2.13.13", "3.3.3")
+ThisBuild / crossScalaVersions := Seq("2.12.20", "2.13.15", "3.4.1")
 ThisBuild / scalaVersion := crossScalaVersions.value.last
 ThisBuild / githubWorkflowPublishTargetBranches := List()
 ThisBuild / githubWorkflowBuildPreamble ++= List(
@@ -34,9 +34,9 @@ javacOptions ++= Seq("-source", "8", "-target", "8")
 
 libraryDependencies ++= Seq(
   "org.sangria-graphql" %% "sangria-marshalling-api" % "1.1.2",
-  "io.argonaut" %% "argonaut" % "6.3.9",
+  "io.argonaut" %% "argonaut" % "6.3.10",
   "org.sangria-graphql" %% "sangria-marshalling-testkit" % "1.0.4" % Test,
-  "org.scalatest" %% "scalatest" % "3.2.18" % Test
+  "org.scalatest" %% "scalatest" % "3.2.19" % Test
 )
 
 git.remoteRepo := "git@github.com:sangria-graphql/sangria-argonaut.git"
